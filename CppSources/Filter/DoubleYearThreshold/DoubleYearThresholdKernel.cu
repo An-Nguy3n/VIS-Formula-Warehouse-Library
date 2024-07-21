@@ -5,7 +5,7 @@
 const int __NUM_THRESHOLD_PER_CYCLE__ = 10;
 
 
-__device__ double max_of_array(double *array, int left, int right, double supremum){
+__device__ __forceinline__ double max_of_array(double *array, int left, int right, double supremum){
     double max_ = __NEGATIVE_INFINITY__;
     for (int i=left; i<right; i++){
         if (array[i] < supremum && array[i] > max_) max_ = array[i];
@@ -14,7 +14,7 @@ __device__ double max_of_array(double *array, int left, int right, double suprem
 }
 
 
-__device__ void top_n_of_array(double *array, int left, int right, double *result, int start, int n){
+__device__ __forceinline__ void top_n_of_array(double *array, int left, int right, double *result, int start, int n){
     double supremum = __POSITIVE_INFINITY__;
     for (int i=0; i<n; i++){
         supremum = max_of_array(array, left, right, supremum);
@@ -37,7 +37,7 @@ __global__ void fill_thresholds(double *weights, double *thresholds, int *INDEX,
 }
 
 
-__device__ void _double_year_threshold_investing(double *weight, double threshold, int t_idx, double *result,
+__device__ __forceinline__ void _double_year_threshold_investing(double *weight, double threshold, int t_idx, double *result,
     double INTEREST, int *INDEX, double *PROFIT, int *SYMBOL, int *BOOL_ARG, int index_size, int num_cycle){
     int reason = 0;
     double Geo2 = 0, Har2 = 0;
