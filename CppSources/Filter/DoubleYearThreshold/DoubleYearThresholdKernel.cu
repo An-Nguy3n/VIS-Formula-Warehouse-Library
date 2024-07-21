@@ -2,6 +2,9 @@
 #include "../../Generator/HomoPoly/CUDA/HomoPolyMethod.cu"
 
 
+const int __NUM_THRESHOLD_PER_CYCLE__ = 5;
+
+
 __device__ double max_of_array(double *array, int left, int right, double supremum){
     double max_ = __NEGATIVE_INFINITY__;
     for (int i=left; i<right; i++){
@@ -28,8 +31,8 @@ __global__ void fill_thresholds(double *weights, double *thresholds, int *INDEX,
         int iy = index / num_cycle;
         top_n_of_array(weights + iy*length,
                        INDEX[ix+1], INDEX[ix+2],
-                       thresholds + iy*5*num_cycle,
-                       ix*5, 5);
+                       thresholds + iy*__NUM_THRESHOLD_PER_CYCLE__*num_cycle,
+                       ix*__NUM_THRESHOLD_PER_CYCLE__, __NUM_THRESHOLD_PER_CYCLE__);
     }
 }
 
@@ -104,7 +107,7 @@ __global__ void double_year_threshold_investing(double *weights, double *thresho
         _double_year_threshold_investing(
             weights + iy*length,
             thresholds[iy*num_threshold + ix],
-            ix / 5,
+            ix / __NUM_THRESHOLD_PER_CYCLE__,
             results + iy*num_threshold*num_cycle*2 + ix*num_cycle*2,
             INTEREST, INDEX, PROFIT, SYMBOL, BOOL_ARG, index_size, num_cycle
         );

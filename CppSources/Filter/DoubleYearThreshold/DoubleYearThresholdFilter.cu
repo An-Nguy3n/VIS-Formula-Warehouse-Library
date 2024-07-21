@@ -2,6 +2,9 @@
 #include "DoubleYearThresholdKernel.cu"
 
 
+const int __SAVE_FREQ__ = 30;
+
+
 class DoubleYearThresholdFilter: public Generator {
 public:
     double *d_threshold;
@@ -20,7 +23,7 @@ public:
 
 DoubleYearThresholdFilter::DoubleYearThresholdFilter(string config_path)
 : Generator(config_path) {
-    int num_threshold = 5*(index_length - 2);
+    int num_threshold = __NUM_THRESHOLD_PER_CYCLE__*(index_length - 2);
     cudaMalloc((void**)&d_threshold, 8*(config.storage_size+cols)*num_threshold);
     cudaMalloc((void**)&d_result, 16*(config.storage_size+cols)*num_threshold*config.num_cycle);
     cudaMalloc((void**)&d_final, 32*(config.storage_size+cols)*config.num_cycle);
@@ -47,7 +50,7 @@ bool DoubleYearThresholdFilter::compute_result(bool force_save){
     );
     cudaDeviceSynchronize();
 
-    int num_threshold = 5*(index_length - 2);
+    int num_threshold = __NUM_THRESHOLD_PER_CYCLE__*(index_length - 2);
     double_year_threshold_investing<<<count_temp_storage*num_threshold/256 + 1, 256>>>(
         temp_weight_storage, d_threshold, d_result, count_temp_storage, num_threshold,
         rows, config.num_cycle, config.interest, INDEX, PROFIT, SYMBOL, BOOL_ARG, index_length
@@ -97,7 +100,7 @@ bool DoubleYearThresholdFilter::compute_result(bool force_save){
     if (!save){
         chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
         chrono::seconds duration = chrono::duration_cast<chrono::seconds>(now - start);
-        if (duration.count() >= 60) save = true;
+        if (duration.count() >= __SAVE_FREQ__) save = true;
     }
 
     if (save){
