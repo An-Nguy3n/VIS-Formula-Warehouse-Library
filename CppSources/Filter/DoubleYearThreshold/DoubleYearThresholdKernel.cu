@@ -2,7 +2,7 @@
 #include "../../Generator/HomoPoly/CUDA/HomoPolyMethod.cu"
 
 
-const int __NUM_THRESHOLD_PER_CYCLE__ = 5;
+const int __NUM_THRESHOLD_PER_CYCLE__ = 10;
 
 
 __device__ double max_of_array(double *array, int left, int right, double supremum){

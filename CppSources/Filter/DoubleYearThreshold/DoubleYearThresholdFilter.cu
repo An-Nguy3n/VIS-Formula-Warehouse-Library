@@ -2,7 +2,7 @@
 #include "DoubleYearThresholdKernel.cu"
 
 
-const int __SAVE_FREQ__ = 30;
+const int __SAVE_FREQ__ = 300;
 
 
 class DoubleYearThresholdFilter: public Generator {
