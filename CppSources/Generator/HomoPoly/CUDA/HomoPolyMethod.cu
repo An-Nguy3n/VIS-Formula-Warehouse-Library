@@ -381,6 +381,7 @@ bool Generator::fill_formula(
 
 bool Generator::compute_result(bool force_save){
     raise_error("Ham khong chay duoc", "Generator::compute_result");
+    return true;
 }
 
 

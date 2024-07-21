@@ -11,6 +11,7 @@ string get_value_by_key(vector<string> keys, vector<string> values, string targe
         if (keys[i] == target) return values[i];
     }
     raise_error("Khong tim thay key", target);
+    return "";
 }
 
 
