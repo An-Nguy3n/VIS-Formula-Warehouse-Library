@@ -6,3 +6,7 @@
 #define BG_GREEN        "\033[1;42m"
 #define FG_YELLOW       "\033[1;33m"
 #define BG_YELLOW       "\033[1;43m"
+#define FG_CYAN         "\033[1;36m"
+#define BG_CYAN         "\033[1;46m"
+#define FG_BRIGHT_CYAN  "\033[1;96m"
+#define BG_BRIGHT_CYAN  "\033[1;106m"
