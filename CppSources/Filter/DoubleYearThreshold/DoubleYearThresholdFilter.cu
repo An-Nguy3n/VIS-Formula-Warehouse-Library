@@ -142,7 +142,7 @@ bool DoubleYearThresholdFilter::compute_result(bool force_save){
         chrono::seconds total_runtime = chrono::duration_cast<chrono::seconds>(check_timeout - time_start);
         long long time_range = total_runtime.count();
 
-        cout << FG_CYAN << "Running: " << time_range << "/" << config.timeout_in_minutes*60 << "secs!\n" << RESET_COLOR;
+        cout << FG_CYAN << "Running: " << time_range << "/" << config.timeout_in_minutes*60 << " secs!\n" << RESET_COLOR;
         cout << FG_BRIGHT_CYAN << current[2][0] << endl;
         cout << current[1][0] << endl;
         for (i=0; i<2*num_opr_per_fml; i++) cout << current[0][i] << " ";
