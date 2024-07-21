@@ -30,12 +30,12 @@ public:
     Generator(string config_path);
     ~Generator();
 
-    void fill_formula(uint8_t *formula, int **f_struct, int idx,
+    bool fill_formula(uint8_t *formula, int **f_struct, int idx,
         double *temp_0, int temp_op, double *temp_1,
         int mode, bool add_sub, bool mul_div
     );
 
-    virtual void compute_result(bool force_save);
+    virtual bool compute_result(bool force_save);
     void run();
 };
 
@@ -110,7 +110,7 @@ Generator::~Generator(){
 }
 
 
-void Generator::fill_formula(
+bool Generator::fill_formula(
     uint8_t *formula,
     int **f_struct,
     int idx,
@@ -153,8 +153,8 @@ void Generator::fill_formula(
                 }
             } else new_add_sub = false;
 
-            fill_formula(new_formula, new_f_struct, idx+1,
-                        temp_0, temp_op, temp_1, 1, new_add_sub, mul_div);
+            if (fill_formula(new_formula, new_f_struct, idx+1,
+                            temp_0, temp_op, temp_1, 1, new_add_sub, mul_div)) return true;
         }
 
         // Giai phong bo nho
@@ -199,8 +199,8 @@ void Generator::fill_formula(
                 }
             }
 
-            fill_formula(new_formula, new_f_struct, idx+1,
-                        temp_0, temp_op, temp_1, 1, add_sub, new_mul_div);
+            if (fill_formula(new_formula, new_f_struct, idx+1,
+                            temp_0, temp_op, temp_1, 1, add_sub, new_mul_div)) return true;
         }
 
         // Giai phong bo nho
@@ -315,26 +315,26 @@ void Generator::fill_formula(
                 if (temp_0_change){
                     if (num_per_grp != 1){
                         for (i=0; i<count; i++)
-                            fill_formula(new_formula[i], f_struct, new_idx,
-                                        new_temp_0+i*rows, temp_op_new, new_temp_1+i*rows,
-                                        new_mode, add_sub, mul_div);
+                            if (fill_formula(new_formula[i], f_struct, new_idx,
+                                            new_temp_0+i*rows, temp_op_new, new_temp_1+i*rows,
+                                            new_mode, add_sub, mul_div)) return true;
                     } else {
                         for (i=0; i<count; i++)
-                            fill_formula(new_formula[i], f_struct, new_idx,
-                                        new_temp_0+i*rows, temp_op_new, temp_1,
-                                        new_mode, add_sub, mul_div);
+                            if (fill_formula(new_formula[i], f_struct, new_idx,
+                                            new_temp_0+i*rows, temp_op_new, temp_1,
+                                            new_mode, add_sub, mul_div)) return true;
                     }
                 } else {
                     if (num_per_grp != 1){
                         for (i=0; i<count; i++)
-                            fill_formula(new_formula[i], f_struct, new_idx,
-                                        temp_0, temp_op_new, new_temp_1+i*rows,
-                                        new_mode, add_sub, mul_div);
+                            if (fill_formula(new_formula[i], f_struct, new_idx,
+                                            temp_0, temp_op_new, new_temp_1+i*rows,
+                                            new_mode, add_sub, mul_div)) return true;
                     } else {
                         for (i=0; i<count; i++)
-                            fill_formula(new_formula[i], f_struct, new_idx,
-                                        temp_0, temp_op_new, temp_1,
-                                        new_mode, add_sub, mul_div);
+                            if (fill_formula(new_formula[i], f_struct, new_idx,
+                                            temp_0, temp_op_new, temp_1,
+                                            new_mode, add_sub, mul_div)) return true;
                     }
                 }
             }
@@ -357,7 +357,7 @@ void Generator::fill_formula(
                         temp_weight_storage, rows, count_temp_storage
                     );
                     cudaDeviceSynchronize();
-                    compute_result(false);
+                    if (compute_result(false)) return true;
                 }
             }
 
@@ -375,10 +375,11 @@ void Generator::fill_formula(
         // Giai phong bo nho
         delete[] valid_operand;
     }
+    return false;
 }
 
 
-void Generator::compute_result(bool force_save){
+bool Generator::compute_result(bool force_save){
     raise_error("Ham khong chay duoc", "Generator::compute_result");
 }
 
@@ -440,12 +441,12 @@ void Generator::run(){
             else {
                 for (i=0; i<fml_shape; i++) current[0][i] = 0;
             }
-            fill_formula(formula, f_struct, 0, temp_0, 0, temp_1, 0, false, false);
+            if (fill_formula(formula, f_struct, 0, temp_0, 0, temp_1, 0, false, false)) return;
             replace_nan_and_inf<<<count_temp_storage*rows/256 + 1, 256>>>(
                 temp_weight_storage, rows, count_temp_storage
             );
             cudaDeviceSynchronize();
-            compute_result(true);
+            if (compute_result(true)) return;
 
             //
             for (i=0; i<groups; i++) delete[] f_struct[i];
