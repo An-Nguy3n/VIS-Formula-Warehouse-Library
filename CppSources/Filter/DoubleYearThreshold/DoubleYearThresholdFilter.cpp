@@ -29,7 +29,6 @@ DoubleYearThresholdFilter::DoubleYearThresholdFilter(string config_path)
     cuda_set_array_value(
         d_result, 2*(config.storage_size+cols)*num_threshold*config.num_cycle, 0
     );
-    h_final = new double[4*(config.storage_size+cols)*config.num_cycle];
 
     start = chrono::high_resolution_clock::now();
 }
