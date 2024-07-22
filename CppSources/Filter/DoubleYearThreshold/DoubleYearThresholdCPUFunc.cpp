@@ -2,7 +2,10 @@
 #include "../../Generator/HomoPoly/CPU/HomoPolyMethod.cpp"
 
 
+#ifndef _NUM_THRESHOLD_PER_CYCLE_
+#define _NUM_THRESHOLD_PER_CYCLE_
 const int __NUM_THRESHOLD_PER_CYCLE__ = 10;
+#endif
 
 
 inline double max_of_array(double *array, int left, int right, double supremum){
