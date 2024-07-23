@@ -17,13 +17,13 @@ def extract_data():
     interest = float(sys.argv[2])
     valuearg_threshold = float(sys.argv[3])
     folder_save = sys.argv[4]
-    base = Base(pd.read_excel(data_path), interest, valuearg_threshold)
 
     os.makedirs(f"{folder_save}/InputData/", exist_ok=True)
     for file in os.listdir(f"{folder_save}/InputData/"):
         if file != "checkpoint.bin":
             os.remove(f"{folder_save}/InputData/{file}")
 
+    base = Base(pd.read_excel(data_path), interest, valuearg_threshold)
     to_bin_file(base, "INDEX", np.int32, folder_save)
     to_bin_file(base, "PROFIT", np.float64, folder_save)
     to_bin_file(base, "SYMBOL", np.int32, folder_save)
