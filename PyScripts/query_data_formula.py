@@ -102,8 +102,6 @@ if __name__ == "__main__":
         column = suppFunc.filter_fields[config["folder_save"].split("/")[-1]]["fields"].split(";")[int(config["eval_index"])]
         print(column)
 
-        print()
-
         # Query 10x needed formulas
         list_args = []
         for t_ in list_time:
