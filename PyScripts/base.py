@@ -1,5 +1,5 @@
 from pandas import DataFrame, Series, concat
-from numpy import array, transpose, zeros, isinf, isnan, full, unique, count_nonzero
+from numpy import array, transpose, zeros, isinf, isnan, full, unique, count_nonzero, sort
 from numba import njit
 
 
@@ -82,6 +82,13 @@ class Base:
             temp_rank = array(temp_.rank(method="max"), float) / (end-start+1)
             self.PROFIT_RANK[start:end] = temp_rank[:-1]
             self.PROFIT_RANK_NI[i] = temp_rank[-1]
+        
+        self.sorted_PROFIT = []
+        for i in range(self.INDEX.shape[0]-1):
+            start, end = self.INDEX[i], self.INDEX[i+1]
+            self.sorted_PROFIT.append(
+                sort(self.PROFIT[start:end])[::-1]
+            )
 
 
 @njit
