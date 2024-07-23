@@ -13,7 +13,8 @@ filter_fields = {
     }
 }
 
-generate_method_name = {
+
+generate_method = {
     "HomogeneousPolynomial": {
         "command": "HP_method_"
     }
