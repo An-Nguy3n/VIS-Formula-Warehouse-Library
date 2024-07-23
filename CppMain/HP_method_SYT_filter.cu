@@ -1,4 +1,4 @@
-#include "CppSources/Filter/SingleYearThreshold/SingleYearThresholdFilter.cu"
+#include "../CppSources/Filter/SingleYearThreshold/SingleYearThresholdFilter.cu"
 
 
 int main(int argc, char *argv[]){

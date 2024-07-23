@@ -1,4 +1,4 @@
-#include "CppSources/Filter/SingleYearThreshold/SingleYearThresholdFilter.cpp"
+#include "../CppSources/Filter/SingleYearThreshold/SingleYearThresholdFilter.cpp"
 #include "omp.h"
 #include <iostream>
 using namespace std;
