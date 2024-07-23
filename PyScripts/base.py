@@ -87,7 +87,7 @@ class Base:
         for i in range(self.INDEX.shape[0]-1):
             start, end = self.INDEX[i], self.INDEX[i+1]
             self.sorted_PROFIT.append(
-                sort(self.PROFIT[start:end])[::-1]
+                sort(list(self.PROFIT[start:end]) + [self.INTEREST])[::-1]
             )
 
 
