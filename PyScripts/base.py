@@ -1,5 +1,5 @@
 from pandas import DataFrame, Series, concat
-from numpy import array, transpose, zeros, isinf, isnan
+from numpy import array, transpose, zeros, isinf, isnan, full, unique, count_nonzero
 from numba import njit
 
 
@@ -112,3 +112,126 @@ def calculate_formula(formula, operand):
     temp_0[isnan(temp_0)] = -1.7976931348623157e+308
     temp_0[isinf(temp_0)] = -1.7976931348623157e+308
     return temp_0
+
+
+@njit
+def decode_formula(f, len_):
+    rs = full(len(f)*2, 0, dtype=int)
+    rs[0::2] = f // len_
+    rs[1::2] = f % len_
+    return rs
+
+
+__STRING_OPERATOR = "+-*/"
+
+def convert_arrF_to_strF(arrF):
+    strF = ""
+    for i in range(len(arrF)):
+        if i % 2 == 1:
+            strF += str(arrF[i])
+        else:
+            strF += __STRING_OPERATOR[arrF[i]]
+
+    return strF
+
+def convert_strF_to_arrF(strF):
+    f_len = sum(strF.count(c) for c in __STRING_OPERATOR) * 2
+    str_len = len(strF)
+    arrF = full(f_len, 0)
+
+    idx = 0
+    for i in range(f_len):
+        if i % 2 == 1:
+            t_ = 0
+            while True:
+                t_ = 10*t_ + int(strF[idx])
+                idx += 1
+                if idx == str_len or strF[idx] in __STRING_OPERATOR:
+                    break
+
+            arrF[i] = t_
+        else:
+            arrF[i] = __STRING_OPERATOR.index(strF[idx])
+            idx += 1
+
+    return arrF
+
+
+def similarity_filter(df_CT, fml_col, n=100, level=2):
+    list_CT = []
+    for ct in df_CT[fml_col]:
+        if type(ct) == str:
+            list_CT.append(convert_strF_to_arrF(ct))
+        else:
+            list_CT.append(ct)
+
+    list_index = _similarity_filter(list_CT, n, level)
+    return df_CT.iloc[list_index].reset_index(drop=True)
+
+
+@njit
+def _similarity_filter(list_ct, num_CT, level):
+    list_index = [0]
+    count = 1
+    for i in range(1, len(list_ct)):
+        check = True
+        for j in list_index:
+            if check_similar_2(list_ct[i], list_ct[j], level):
+                check = False
+                break
+
+        if check:
+            list_index.append(i)
+            count += 1
+            if count == num_CT:
+                print(i)
+                break
+
+    return list_index
+
+
+@njit
+def check_similar_2(f1_, f2_, level):
+    f1 = unique(f1_[1::2])
+    f2 = unique(f2_[1::2])
+
+    if len(f1) > len(f2):
+        F1 = f1
+        F2 = f2
+    else:
+        F1 = f2
+        F2 = f1
+    
+    count = 0
+    for i in F1:
+        if i not in F2:
+            count += 1
+
+    if count >= level:
+        return False
+    
+    len1 = len(f1_)
+    len2 = len(f2_)
+    if len1 == len2:
+        if count_nonzero(f1_!=f2_) >= 2*level:
+            return False
+    else:
+        min_ = 100
+        if len1 < len2:
+            lenm = len1
+            F1 = f1_
+            F2 = f2_
+        else:
+            lenm = len2
+            F1 = f2_
+            F2 = f1_
+
+        for i in range(0, abs(len1-len2)+1, 2):
+            temp = count_nonzero(F1 != F2[i:i+lenm])
+            if temp < min_:
+                min_ = temp
+
+        if min_ >= 2*level:
+            return False
+
+    return True
