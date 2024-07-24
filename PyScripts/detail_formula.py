@@ -91,11 +91,11 @@ def doubleYearThreshold(vis: Base, weight):
 
 
 def tripleYearThreshold(vis: Base, weight):
-    ValGeoNgn3, GeoNgn3, ValHarNgn3, HarNgn3, last_reason = foo.doubleYearThreshold(
+    ValGeoNgn3, GeoNgn3, ValHarNgn3, HarNgn3, last_reason = foo.tripleYearThreshold(
         weight, vis.INDEX, vis.PROFIT, vis.SYMBOL, vis.INTEREST, vis.BOOL_ARG
     )
 
-    list_invest, list_profit = foo.doubleYearThreshold_test(
+    list_invest, list_profit = foo.tripleYearThreshold_test(
         weight, vis.INDEX, vis.PROFIT, vis.SYMBOL, vis.INTEREST, vis.BOOL_ARG, ValHarNgn3, 0
     )
 
