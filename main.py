@@ -13,7 +13,7 @@ def run_worker(lib_abs_path, generate_method, filter_name, worker_type, config_p
 
     command = f"{lib_abs_path}ExeFile/"
 
-    command += suppFunc.generate_method_name[generate_method]["command"]
+    command += suppFunc.generate_method[generate_method]["command"]
 
     command += suppFunc.filter_fields[filter_name]["command"]
 
@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
         # folder_save
         generate_method = config[i]["generate_method"]
-        assert generate_method in list(suppFunc.generate_method_name.keys())
+        assert generate_method in list(suppFunc.generate_method.keys())
         list_generate_method.append(generate_method)
 
         folder_save = f"{warehouse_path}/{data_name}/{generate_method}/{filter_name}"
