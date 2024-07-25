@@ -6,15 +6,14 @@ from colorama import Fore, Style
 import time
 import multiprocessing
 from PyScripts import suppFunc
+import datetime
 
 
-def run_worker(lib_abs_path, generate_method, filter_name, worker_type, config_path, wait_before_run):
+def run_worker(lib_abs_path, generate_method, filter_name, worker_type, config_path, wait_before_run, timeout):
     time.sleep(wait_before_run)
 
     command = f"{lib_abs_path}ExeFile/"
-
     command += suppFunc.generate_method[generate_method]["command"]
-
     command += suppFunc.filter_fields[filter_name]["command"]
 
     if worker_type == "CPU":
@@ -25,11 +24,14 @@ def run_worker(lib_abs_path, generate_method, filter_name, worker_type, config_p
 
     command += f" {config_path}"
 
-    print(Fore.LIGHTCYAN_EX + "Starting worker with input:",
+    print(Fore.LIGHTCYAN_EX + f"Run {worker_type} worker with input:",
           Fore.LIGHTMAGENTA_EX + "; " + lib_abs_path + "; " + generate_method
           + "; " +filter_name + "; " +worker_type + "; " +config_path, Style.RESET_ALL)
     print(command)
-    print()
+    now = datetime.datetime.now()
+    print(f"Time start: {now.hour}-{now.minute}-{now.second}")
+    t_e = now + datetime.timedelta(minutes=timeout)
+    print(f"Estimated time end: {t_e.hour}-{t_e.minute}-{t_e.second}")
     os.system(f"start /wait cmd /c {command}")
 
 
@@ -41,6 +43,7 @@ if __name__ == "__main__":
     worker_type = config[0]["worker_type"]
     timeout_per_task = config[0]["timeout_per_task"]
     warehouse_path = config[0]["warehouse_path"]
+    folder_formula = config[0]["folder_formula"]
 
     assert num_worker in [1, 2, 3]
     assert worker_type in ["GPU", "CPU", "Hybrid"]
@@ -63,12 +66,14 @@ if __name__ == "__main__":
         data_name = data_path.split("/")[-1].replace(".xlsx", "")
         if data_name not in os.listdir(warehouse_path):
             os.makedirs(warehouse_path + f"/{data_name}")
+            os.makedirs(folder_formula + f"/{data_name}")
 
         try:
             data_full = pd.read_excel(warehouse_path + f"/{data_name}" + f"/data_full.xlsx")
             print(Fore.GREEN + "Read data_full:", warehouse_path + f"/{data_name}" + f"/data_full.xlsx", Style.RESET_ALL)
         except:
             data.to_excel(warehouse_path + f"/{data_name}" + f"/data_full.xlsx", index=False)
+            data.to_excel(folder_formula + f"/{data_name}" + f"/data_full.xlsx", index=False)
             data_full = pd.read_excel(warehouse_path + f"/{data_name}" + f"/data_full.xlsx")
             print(Fore.GREEN + "Created data_full:", warehouse_path + f"/{data_name}" + f"/data_full.xlsx", Style.RESET_ALL)
 
@@ -90,10 +95,10 @@ if __name__ == "__main__":
             data_train.loc[0, "TIME"] = max_cycle
             data_train.sort_index(inplace=True)
             data_train.to_excel(warehouse_path + f"/{data_name}" + f"/data_train.xlsx", index=False)
+            data_train.to_excel(folder_formula + f"/{data_name}" + f"/data_train.xlsx", index=False)
             print(Fore.GREEN + "Created data_train:", warehouse_path + f"/{data_name}" + f"/data_train.xlsx", Style.RESET_ALL)
             data_train = pd.read_excel(warehouse_path + f"/{data_name}" + f"/data_train.xlsx")
 
-        print()
         task_config.append(f"data_path = {warehouse_path}/{data_name}/data_train.xlsx")
 
         # filter_field
@@ -148,7 +153,6 @@ if __name__ == "__main__":
         with open(config_path, "w") as f:
             f.write("\n".join(task_config))
             print(Fore.GREEN + "Created task_config:", config_path, Style.RESET_ALL)
-            print()
             print("\n".join(task_config))
             print()
 
@@ -178,14 +182,15 @@ if __name__ == "__main__":
                     filter_name,
                     worker_type,
                     config_path,
-                    j
+                    j,
+                    timeout_per_task
                 ))
 
             pool = multiprocessing.Pool(processes=num_worker)
             pool.starmap(run_worker, list_worker_input)
             pool.close()
             pool.join()
-            time.sleep(5)
+            time.sleep(10)
 
         # Tong ket cong thuc o day
         command = "python " + lib_abs_path + "PyScripts/query_data_formula.py "\
@@ -196,5 +201,6 @@ if __name__ == "__main__":
             command += list_config_path[k] + " "
 
         os.system(command)
+        # break
 
     #_________________________END_________________________#
