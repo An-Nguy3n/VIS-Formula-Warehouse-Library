@@ -108,7 +108,7 @@ if __name__ == "__main__":
             list_args.append((
                 t_,
                 column,
-                10000,
+                1000000,
                 db_path,
                 num_data_operand,
                 False
@@ -125,7 +125,7 @@ if __name__ == "__main__":
             list_args.append((
                 results[i],
                 "CT",
-                1000,
+                10000,
                 2
             ))
 
