@@ -79,7 +79,7 @@ class Base:
         for i in range(self.INDEX.shape[0]-1):
             start, end = self.INDEX[i], self.INDEX[i+1]
             temp_ = concat([data.loc[start:end-1, "PROFIT"], temp_serie], ignore_index=True)
-            temp_rank = array(temp_.rank(method="max"), float) / (end-start+1)
+            temp_rank = array(temp_.rank(method="max"), float) #/ (end-start+1)
             self.PROFIT_RANK[start:end] = temp_rank[:-1]
             self.PROFIT_RANK_NI[i] = temp_rank[-1]
         
