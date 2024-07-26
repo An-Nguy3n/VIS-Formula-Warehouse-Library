@@ -66,7 +66,7 @@ if __name__ == "__main__":
         data_name = data_path.split("/")[-1].replace(".xlsx", "")
         if data_name not in os.listdir(warehouse_path):
             os.makedirs(warehouse_path + f"/{data_name}")
-            os.makedirs(folder_formula + f"/{data_name}")
+            os.makedirs(folder_formula + f"/{data_name}", exist_ok=True)
 
         try:
             data_full = pd.read_excel(warehouse_path + f"/{data_name}" + f"/data_full.xlsx")
@@ -76,6 +76,7 @@ if __name__ == "__main__":
             data.to_excel(folder_formula + f"/{data_name}" + f"/data_full.xlsx", index=False)
             data_full = pd.read_excel(warehouse_path + f"/{data_name}" + f"/data_full.xlsx")
             print(Fore.GREEN + "Created data_full:", warehouse_path + f"/{data_name}" + f"/data_full.xlsx", Style.RESET_ALL)
+            print(Fore.GREEN + "Created data_full:", folder_formula + f"/{data_name}" + f"/data_full.xlsx", Style.RESET_ALL)
 
         suppFunc.compare_dfs(data, data_full)
 
@@ -97,6 +98,7 @@ if __name__ == "__main__":
             data_train.to_excel(warehouse_path + f"/{data_name}" + f"/data_train.xlsx", index=False)
             data_train.to_excel(folder_formula + f"/{data_name}" + f"/data_train.xlsx", index=False)
             print(Fore.GREEN + "Created data_train:", warehouse_path + f"/{data_name}" + f"/data_train.xlsx", Style.RESET_ALL)
+            print(Fore.GREEN + "Created data_train:", folder_formula + f"/{data_name}" + f"/data_train.xlsx", Style.RESET_ALL)
             data_train = pd.read_excel(warehouse_path + f"/{data_name}" + f"/data_train.xlsx")
 
         task_config.append(f"data_path = {warehouse_path}/{data_name}/data_train.xlsx")
