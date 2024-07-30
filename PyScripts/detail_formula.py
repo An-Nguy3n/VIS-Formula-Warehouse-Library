@@ -155,6 +155,10 @@ def process(data_full: pd.DataFrame, df_CT: pd.DataFrame, interest: float, value
             weight, vis.INDEX, vis.PROFIT, vis.INTEREST
         )))
 
+        temp_data.extend([foo.getNoBalanceValue(
+            weight, vis.INDEX, vis.PROFIT
+        )])
+
         #
         all_data.append(temp_data)
 
@@ -163,7 +167,8 @@ def process(data_full: pd.DataFrame, df_CT: pd.DataFrame, interest: float, value
                 + "ValGeo1, GeoNgn1, ValHar1, HarNgn1, CtyNgn1, ProNgn1, RankGeo1, RankHar1".split(", ")\
                 + "ValGeo2, GeoNgn2, ValHar2, HarNgn2, CtyNgn2, ProNgn2, RankGeo2, RankHar2".split(", ")\
                 + "ValGeo3, GeoNgn3, ValHar3, HarNgn3, CtyNgn3, ProNgn3, RankGeo3, RankHar3".split(", ")\
-                + "Slope_avg, Slope_wgt_avg".split(", ")
+                + "Slope_avg, Slope_wgt_avg".split(", ")\
+                + ["NoBalanceValue"]
 
     df_new = pd.DataFrame(all_data, columns=list_column)
     return df_new

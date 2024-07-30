@@ -438,3 +438,31 @@ def find_slope(WEIGHT, INDEX, PROFIT, INTEREST):
     y = arr_inv_value[-1]
     slope_avg, slope_wgtavg = _find_slope(temp_profit, temp_value, y)
     return slope_avg, slope_wgtavg
+
+
+@njit
+def _getNoBalanceValue(PROFIT: np.ndarray):
+    cur_idx = PROFIT.shape[0] // 2
+    for i in range(cur_idx, 0, -1):
+        if PROFIT[:i].mean() <= PROFIT[i:].mean():
+            if i == cur_idx:
+                return int(1e8)
+            return i + 1
+    return 1
+
+
+@njit
+def getNoBalanceValue(WEIGHT: np.ndarray, INDEX, PROFIT: np.ndarray):
+    size = INDEX.shape[0] - 1
+    avg_nb_value = 0.0
+    for i in range(1, size):
+        start, end = INDEX[i], INDEX[i+1]
+        tmp_wgt = WEIGHT[start:end]
+        tmp_prf = PROFIT[start:end].copy()
+        tmp_prf[:] = tmp_prf[tmp_wgt.argsort()[::-1]]
+        nb_val = _getNoBalanceValue(tmp_prf)
+        if nb_val == int(1e8):
+            return 1e8
+        avg_nb_value += nb_val
+
+    return avg_nb_value / (size - 1)

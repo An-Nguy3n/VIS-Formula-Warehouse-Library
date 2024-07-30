@@ -7,6 +7,7 @@ import time
 import multiprocessing
 from PyScripts import suppFunc
 import datetime
+import sys
 
 
 def run_worker(lib_abs_path, generate_method, filter_name, worker_type, config_path, wait_before_run, timeout):
@@ -36,6 +37,9 @@ def run_worker(lib_abs_path, generate_method, filter_name, worker_type, config_p
 
 
 if __name__ == "__main__":
+    list_sys_args = [tuple(t_.split("=")) for t_ in sys.argv[1:]]
+    dict_sys_args = {t_[0]:t_[1] for t_ in list_sys_args}
+    print(dict_sys_args)
     with open("config.json", "r") as f:
         config = json.load(f)
 
@@ -170,39 +174,48 @@ if __name__ == "__main__":
 
     n = len(list_config_path)
     while True:
-        for i in range(n):
-            list_worker_input = []
-            for j in range(num_worker):
-                generate_method = list_generate_method[(i+j)%n]
-                filter_name = list_filter_name[(i+j)%n]
-                worker_type = list_worker_type[j]
-                config_path = list_config_path[(i+j)%n]
+        if "detail_only" in dict_sys_args.keys() and dict_sys_args["detail_only"] == "True":
+            pass
+        else:
+            for i in range(n):
+                list_worker_input = []
+                for j in range(num_worker):
+                    generate_method = list_generate_method[(i+j)%n]
+                    filter_name = list_filter_name[(i+j)%n]
+                    worker_type = list_worker_type[j]
+                    config_path = list_config_path[(i+j)%n]
 
-                list_worker_input.append((
-                    lib_abs_path,
-                    generate_method,
-                    filter_name,
-                    worker_type,
-                    config_path,
-                    j,
-                    timeout_per_task
-                ))
+                    list_worker_input.append((
+                        lib_abs_path,
+                        generate_method,
+                        filter_name,
+                        worker_type,
+                        config_path,
+                        j,
+                        timeout_per_task
+                    ))
 
-            pool = multiprocessing.Pool(processes=num_worker)
-            pool.starmap(run_worker, list_worker_input)
-            pool.close()
-            pool.join()
-            time.sleep(10)
+                pool = multiprocessing.Pool(processes=num_worker)
+                pool.starmap(run_worker, list_worker_input)
+                pool.close()
+                pool.join()
+                time.sleep(10)
 
         # Tong ket cong thuc o day
+        if "detail_only" in dict_sys_args.keys() and dict_sys_args["detail_only"] == "True":
+            temp_text = "True "
+        else: temp_text = "False "
+
         command = "python " + lib_abs_path + "PyScripts/query_data_formula.py "\
             + config[0]["folder_formula"] + " "\
-            + config[0]["warehouse_path"] + " "
+            + config[0]["warehouse_path"] + " "\
+            + temp_text
 
         for k in range(n):
             command += list_config_path[k] + " "
 
         os.system(command)
-        # break
+        if "detail_only" in dict_sys_args.keys() and dict_sys_args["detail_only"] == "True":
+            break
 
     #_________________________END_________________________#

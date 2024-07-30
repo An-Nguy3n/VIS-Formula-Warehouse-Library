@@ -1,6 +1,6 @@
 from sqlite3 import Connection
 from numpy import array, unique
-from pandas import read_excel
+from pandas import read_excel, read_csv
 from pandas import DataFrame
 from json import load
 from sys import argv
@@ -65,10 +65,11 @@ def top_n_by_column(time, column, n_row, db_file_path, num_data_operand, select_
 if __name__ == "__main__":
     folder_path = argv[1]
     warehouse_p = argv[2]
-    list_config_path = argv[3:]
-    for i in range(len(list_config_path)):
+    detail_only = argv[3]
+    list_config_path = argv[4:]
+    for ii in range(len(list_config_path)):
         # Dest folder
-        config_path = list_config_path[i]
+        config_path = list_config_path[ii]
         dest_folder = config_path.replace(warehouse_p, folder_path).replace("config.txt", "")
         print(dest_folder)
         makedirs(dest_folder, exist_ok=True)
@@ -102,37 +103,43 @@ if __name__ == "__main__":
         column = suppFunc.filter_fields[config["folder_save"].split("/")[-1]]["fields"].split(";")[int(config["eval_index"])]
         print(column)
 
-        # Query 10x needed formulas
-        list_args = []
-        for t_ in list_time:
-            list_args.append((
-                t_,
-                column,
-                1000000,
-                db_path,
-                num_data_operand,
-                False
-            ))
+        if detail_only != "True":
+            # Query 10x needed formulas
+            list_args = []
+            for t_ in list_time:
+                list_args.append((
+                    t_,
+                    column,
+                    1000000,
+                    db_path,
+                    num_data_operand,
+                    False
+                ))
 
-        pool = Pool(processes=len(list_args))
-        results = pool.starmap(top_n_by_column, list_args)
-        pool.close()
-        pool.join()
+            pool = Pool(processes=len(list_args))
+            results = pool.starmap(top_n_by_column, list_args)
+            pool.close()
+            pool.join()
 
-        # similarity filter
-        list_args = []
-        for i in range(len(results)):
-            list_args.append((
-                results[i],
-                "CT",
-                10000,
-                2
-            ))
+            # similarity filter
+            list_args = []
+            for i in range(len(results)):
+                list_args.append((
+                    results[i],
+                    "CT",
+                    10000,
+                    2
+                ))
 
-        pool = Pool(processes=len(list_args))
-        results = pool.starmap(similarity_filter, list_args)
-        pool.close()
-        pool.join()
+            pool = Pool(processes=len(list_args))
+            results = pool.starmap(similarity_filter, list_args)
+            pool.close()
+            pool.join()
+        else:
+            results = []
+            for t_ in list_time:
+                results.append(read_csv(dest_folder + f"{t_+diff_time}.csv")[["id", "CT"]])
+                print(Fore.LIGHTGREEN_EX + "Read:", dest_folder + f"{t_+diff_time}.csv", Style.RESET_ALL)
 
         # Detail formula
         list_args = []
