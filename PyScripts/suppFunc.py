@@ -10,6 +10,11 @@ filter_fields = {
     "SingleYearThreshold": {
         "fields": "ValGeo;GeoNgn;ValHar;HarNgn",
         "command": "SYT_filter_"
+    },
+
+    "NoBalanceValue": {
+        "fields": "NoBalVal",
+        "command": "NBV_filter_"
     }
 }
 
