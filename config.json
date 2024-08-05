@@ -2,7 +2,7 @@
     {
         "num_worker": 2,
         "worker_type": "Hybrid",
-        "timeout_per_task": 30,
+        "timeout_per_task": 360,
         "warehouse_path": "V:/VIS-Formula-Warehouse",
         "folder_formula": "V:/VIS-Formula-Data"
     },
@@ -45,6 +45,28 @@
         "filter": "SingleYearThreshold",
         "eval_index": 3,
         "eval_threshold": 1.37,
+        "interest": 1.06,
+        "valuearg_threshold": 500000000.0,
+        "num_cycle": 10,
+        "temp_storage_size": 10000
+    },
+    {
+        "data_path": "V:/Datas/HOSE_Field_2024_official.xlsx",
+        "generate_method": "HomogeneousPolynomial",
+        "filter": "NoBalanceValue",
+        "eval_index": 0,
+        "eval_threshold": -200.0,
+        "interest": 1.06,
+        "valuearg_threshold": 500000000.0,
+        "num_cycle": 10,
+        "temp_storage_size": 10000
+    },
+    {
+        "data_path": "V:/Datas/HOSE_Field_2024_official_WMA.xlsx",
+        "generate_method": "HomogeneousPolynomial",
+        "filter": "NoBalanceValue",
+        "eval_index": 0,
+        "eval_threshold": -200.0,
         "interest": 1.06,
         "valuearg_threshold": 500000000.0,
         "num_cycle": 10,
