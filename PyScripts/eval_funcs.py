@@ -459,7 +459,7 @@ def getNoBalanceValue(WEIGHT: np.ndarray, INDEX, PROFIT: np.ndarray):
         start, end = INDEX[i], INDEX[i+1]
         tmp_wgt = WEIGHT[start:end]
         tmp_prf = PROFIT[start:end].copy()
-        tmp_prf[:] = tmp_prf[tmp_wgt.argsort()[::-1]]
+        tmp_prf[:] = tmp_prf[(-tmp_wgt).argsort(kind="mergesort")]
         nb_val = _getNoBalanceValue(tmp_prf)
         if nb_val == int(1e8):
             return 1e8
