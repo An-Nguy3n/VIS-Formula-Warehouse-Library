@@ -23,31 +23,6 @@ public:
 };
 
 
-NoBalanceValueFilter::NoBalanceValueFilter(string config_path)
-: Generator(config_path) {
-    d_profits = new double[rows*(config.storage_size+cols)];
-    d_profits_origin = new double[rows*(config.storage_size+cols)];
-    h_results = new double[config.num_cycle*(config.storage_size+cols)];
-
-    d_temp_wgt = new double[rows*(config.storage_size+cols)];
-    d_temp_prf = new double[rows*(config.storage_size+cols)];
-
-    start = chrono::high_resolution_clock::now();
-
-    for (int i=0; i<config.storage_size+cols; i++)
-        memcpy(d_profits_origin+i*rows, PROFIT, 8*rows);
-}
-
-
-NoBalanceValueFilter::~NoBalanceValueFilter(){
-    delete[] d_profits;
-    delete[] d_profits_origin;
-    delete[] h_results;
-    delete[] d_temp_wgt;
-    delete[] d_temp_prf;
-}
-
-
 bool NoBalanceValueFilter::compute_result(bool force_save){
     memcpy(d_profits, d_profits_origin, 8*rows*count_temp_storage);
 
@@ -148,4 +123,29 @@ bool NoBalanceValueFilter::compute_result(bool force_save){
         if (time_range >= config.timeout_in_minutes*60) return true;
     }
     return false;
+}
+
+
+NoBalanceValueFilter::NoBalanceValueFilter(string config_path)
+: Generator(config_path) {
+    d_profits = new double[rows*(config.storage_size+cols)];
+    d_profits_origin = new double[rows*(config.storage_size+cols)];
+    h_results = new double[config.num_cycle*(config.storage_size+cols)];
+
+    d_temp_wgt = new double[rows*(config.storage_size+cols)];
+    d_temp_prf = new double[rows*(config.storage_size+cols)];
+
+    start = chrono::high_resolution_clock::now();
+
+    for (int i=0; i<config.storage_size+cols; i++)
+        memcpy(d_profits_origin+i*rows, PROFIT, 8*rows);
+}
+
+
+NoBalanceValueFilter::~NoBalanceValueFilter(){
+    delete[] d_profits;
+    delete[] d_profits_origin;
+    delete[] h_results;
+    delete[] d_temp_wgt;
+    delete[] d_temp_prf;
 }

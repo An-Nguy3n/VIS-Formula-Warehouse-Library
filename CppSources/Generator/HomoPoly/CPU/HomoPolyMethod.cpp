@@ -40,57 +40,6 @@ public:
 };
 
 
-Generator::Generator(string config_path){
-    config = HomoPolyConfig(config_path);
-
-    // Extract data
-    string command = "python " + config.lib_abs_path + "/PyScripts/extract_data.py "
-        + config.data_path + " " + to_string(config.interest) + " "
-        + to_string(config.valuearg_threshold) + " " + config.folder_save;
-    system(command.c_str());
-
-    // Load data
-    read_binary_file_1d(INDEX, index_length, config.folder_save + "/InputData/INDEX.bin");
-    read_binary_file_1d(SYMBOL, rows, config.folder_save + "/InputData/SYMBOL.bin");
-    read_binary_file_1d(BOOL_ARG, rows, config.folder_save + "/InputData/BOOL_ARG.bin");
-    read_binary_file_1d(PROFIT, rows, config.folder_save + "/InputData/PROFIT.bin");
-    read_binary_file_2d(OPERAND, cols, rows, config.folder_save + "/InputData/OPERAND.bin");
-
-    // Load checkpoint
-    load_checkpoint_PolyMethod(current, config.folder_save, num_opr_per_fml, config.lib_abs_path);
-
-    // Init storage
-    temp_weight_storage = new double[(config.storage_size+cols)*rows];
-    temp_formula_storage = new uint8_t*[config.storage_size+cols];
-    count_temp_storage = 0;
-
-    //
-    time_start = chrono::high_resolution_clock::now();
-    queries = new string[config.num_cycle];
-}
-
-
-Generator::~Generator(){
-    delete[] INDEX;
-    delete[] SYMBOL;
-    delete[] BOOL_ARG;
-    delete[] PROFIT;
-    delete[] OPERAND;
-
-    for (int i=0; i<3; i++) delete[] current[i];
-    delete[] current;
-
-    delete[] temp_weight_storage;
-    delete[] temp_formula_storage;
-
-    delete[] queries;
-
-    chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
-    chrono::duration<long long> duration = chrono::duration_cast<chrono::seconds>(now - time_start);
-    cout << FG_GREEN << "Thoi gian Worker chay: " << duration.count() << " seconds.\n" << RESET_COLOR;
-}
-
-
 bool Generator::fill_formula(
     uint8_t *formula,
     int **f_struct,
@@ -434,4 +383,55 @@ void Generator::run(){
     delete[] h_temp_0;
     delete[] temp_0;
     delete[] temp_1;
+}
+
+
+Generator::Generator(string config_path){
+    config = HomoPolyConfig(config_path);
+
+    // Extract data
+    string command = "python " + config.lib_abs_path + "/PyScripts/extract_data.py "
+        + config.data_path + " " + to_string(config.interest) + " "
+        + to_string(config.valuearg_threshold) + " " + config.folder_save;
+    system(command.c_str());
+
+    // Load data
+    read_binary_file_1d(INDEX, index_length, config.folder_save + "/InputData/INDEX.bin");
+    read_binary_file_1d(SYMBOL, rows, config.folder_save + "/InputData/SYMBOL.bin");
+    read_binary_file_1d(BOOL_ARG, rows, config.folder_save + "/InputData/BOOL_ARG.bin");
+    read_binary_file_1d(PROFIT, rows, config.folder_save + "/InputData/PROFIT.bin");
+    read_binary_file_2d(OPERAND, cols, rows, config.folder_save + "/InputData/OPERAND.bin");
+
+    // Load checkpoint
+    load_checkpoint_PolyMethod(current, config.folder_save, num_opr_per_fml, config.lib_abs_path);
+
+    // Init storage
+    temp_weight_storage = new double[(config.storage_size+cols)*rows];
+    temp_formula_storage = new uint8_t*[config.storage_size+cols];
+    count_temp_storage = 0;
+
+    //
+    time_start = chrono::high_resolution_clock::now();
+    queries = new string[config.num_cycle];
+}
+
+
+Generator::~Generator(){
+    delete[] INDEX;
+    delete[] SYMBOL;
+    delete[] BOOL_ARG;
+    delete[] PROFIT;
+    delete[] OPERAND;
+
+    for (int i=0; i<3; i++) delete[] current[i];
+    delete[] current;
+
+    delete[] temp_weight_storage;
+    delete[] temp_formula_storage;
+
+    delete[] queries;
+
+    chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+    chrono::duration<long long> duration = chrono::duration_cast<chrono::seconds>(now - time_start);
+    cout << FG_GREEN << "Thoi gian Worker chay: " << duration.count() << " seconds.\n" << RESET_COLOR;
 }

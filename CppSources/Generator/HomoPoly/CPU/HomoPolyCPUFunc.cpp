@@ -8,6 +8,19 @@ const double __NEGATIVE_INFINITY__ = -1.7976931348623157e+308;
 const double __POSITIVE_INFINITY__ = +1.7976931348623157e+308;
 
 
+inline void cuda_set_array_value(double* array, int length, double value);
+
+inline void copy_from_operands(double *dest, double *operands, int *arrCpy, int length, int numCpy);
+
+inline void update_temp_weight(double *temp_weight_new, double *temp_weight_old, double *operands, int *arrOpr, int length, int numOpr, bool isMul);
+
+inline void update_last_weight(double *last_weight, double *curr_weight, double *temp_weight, int length, int numOpr, bool isAdd);
+
+inline void update_last_weight_through_operands(double *last_weight, double *curr_weight, double *operands, int *arrOpr, int length, int numOpr, bool isAdd);
+
+inline void replace_nan_and_inf(double *array, int length, int numOpr);
+
+
 inline void cuda_set_array_value(double* array, int length, double value){
     #pragma omp parallel for
     for (int index=0; index<length; index++){

@@ -22,27 +22,6 @@ public:
 };
 
 
-SingleYearThresholdFilter::SingleYearThresholdFilter(string config_path)
-: Generator(config_path) {
-    int num_threshold = __NUM_THRESHOLD_PER_CYCLE__*(index_length - 2);
-    d_threshold = new double[(config.storage_size+cols)*num_threshold];
-    d_result = new double[2*(config.storage_size+cols)*num_threshold*config.num_cycle];
-    h_final = new double[4*(config.storage_size+cols)*config.num_cycle];
-    cuda_set_array_value(
-        d_result, 2*(config.storage_size+cols)*num_threshold*config.num_cycle, 0
-    );
-
-    start = chrono::high_resolution_clock::now();
-}
-
-
-SingleYearThresholdFilter::~SingleYearThresholdFilter(){
-    delete[] d_threshold;
-    delete[] d_result;
-    delete[] h_final;
-}
-
-
 bool SingleYearThresholdFilter::compute_result(bool force_save){
     fill_thresholds(
         temp_weight_storage, d_threshold, INDEX, index_length, count_temp_storage, rows
@@ -144,4 +123,25 @@ bool SingleYearThresholdFilter::compute_result(bool force_save){
         if (time_range >= config.timeout_in_minutes*60) return true;
     }
     return false;
+}
+
+
+SingleYearThresholdFilter::SingleYearThresholdFilter(string config_path)
+: Generator(config_path) {
+    int num_threshold = __NUM_THRESHOLD_PER_CYCLE__*(index_length - 2);
+    d_threshold = new double[(config.storage_size+cols)*num_threshold];
+    d_result = new double[2*(config.storage_size+cols)*num_threshold*config.num_cycle];
+    h_final = new double[4*(config.storage_size+cols)*config.num_cycle];
+    cuda_set_array_value(
+        d_result, 2*(config.storage_size+cols)*num_threshold*config.num_cycle, 0
+    );
+
+    start = chrono::high_resolution_clock::now();
+}
+
+
+SingleYearThresholdFilter::~SingleYearThresholdFilter(){
+    delete[] d_threshold;
+    delete[] d_result;
+    delete[] h_final;
 }

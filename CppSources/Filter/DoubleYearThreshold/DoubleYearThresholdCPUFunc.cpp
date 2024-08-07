@@ -8,6 +8,21 @@ const int __NUM_THRESHOLD_PER_CYCLE__ = 10;
 #endif
 
 
+inline double max_of_array(double *array, int left, int right, double supremum);
+
+inline void top_n_of_array(double *array, int left, int right, double *result, int start, int n);
+
+inline void fill_thresholds(double *weights, double *thresholds, int *INDEX, int index_length, int num_array, int length);
+
+inline void _double_year_threshold_investing(double *weight, double threshold, int t_idx, double *result,
+    double INTEREST, int *INDEX, double *PROFIT, int *SYMBOL, int *BOOL_ARG, int index_size, int num_cycle);
+
+inline void double_year_threshold_investing(double *weights, double *thresholds, double *results, int num_array, int num_threshold,
+    int length, int num_cycle, double INTEREST, int *INDEX, double *PROFIT, int *SYMBOL, int *BOOL_ARG, int index_size);
+
+inline void find_best_results(double *results, double *thresholds, double *finals, int num_array, int num_threshold, int num_cycle);
+
+
 inline double max_of_array(double *array, int left, int right, double supremum){
     double max_ = __NEGATIVE_INFINITY__;
     for (int i=left; i<right; i++){

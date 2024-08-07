@@ -10,6 +10,17 @@ const int __NUM_THRESHOLD_PER_CYCLE__ = 10;
 inline void _single_year_threshold_investing(
     double *weight, double threshold, int t_idx, double *result,
     double INTEREST, int *INDEX, double *PROFIT, int index_size, int num_cycle
+);
+
+void single_year_threshold_investing(
+    double *weights, double *thresholds, double *results, int num_array, int num_threshold,
+    int length, int num_cycle, double INTEREST, int *INDEX, double *PROFIT, int index_size
+);
+
+
+inline void _single_year_threshold_investing(
+    double *weight, double threshold, int t_idx, double *result,
+    double INTEREST, int *INDEX, double *PROFIT, int index_size, int num_cycle
 ) {
     double Geo = 0, Har = 0;
     int start, end, count, k, rs_idx;

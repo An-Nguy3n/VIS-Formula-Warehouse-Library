@@ -2,6 +2,59 @@
 #include <omp.h>
 
 
+inline void merge(
+    double *keys,
+    double *vals,
+    int left,
+    int mid,
+    int right,
+    double *temp_keys,
+    double *temp_vals
+);
+
+inline void mergeSort(
+    double *keys,
+    double *vals,
+    int n,
+    double *temp_keys,
+    double *temp_vals
+);
+
+inline double mean(
+    double *array,
+    int start,
+    int end
+);
+
+inline double noBalance_point(
+    double *sortedProfit,
+    int n
+);
+
+inline void _get_noBalance_value(
+    double *weight,
+    double *profit,
+    double *temp_wgt,
+    double *temp_prf,
+    int *INDEX,
+    int index_size,
+    int num_cycle,
+    double *result
+);
+
+void get_noBalance_value(
+    double *weights,
+    double *profits,
+    double *temp_wgts,
+    double *temp_prfs,
+    int length,
+    int *INDEX,
+    int index_size,
+    int num_cycle,
+    double *results,
+    int num_array
+);
+
 
 inline void merge(
     double *keys,
