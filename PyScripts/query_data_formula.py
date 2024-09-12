@@ -81,10 +81,13 @@ if __name__ == "__main__":
         config = {}
         for line in text_config.split("\n"):
             a, b = line.split("=")
+            if "data_path" in a:
+                b = b.replace("data_train", "data_full")
             config[a.strip()] = b.strip()
 
         # Read data_full to find num_data_operand, list_time
         data_full = read_excel(config["data_path"])
+        print(config["data_path"], "ABCXYZ")
         vis = Base(data_full, float(config["interest"]), float(config["valuearg_threshold"]))
         num_data_operand = vis.OPERAND.shape[0]
 

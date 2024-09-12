@@ -31,6 +31,7 @@ def compare_dfs(df1: pd.DataFrame, df2: pd.DataFrame):
     for i in range(df1.shape[1]):
         assert df1.columns[i] == df2.columns[i]
         col = df1.columns[i]
+        print("Compare:", col)
         assert df1[col].dtype == df2[col].dtype
         if df1[col].dtype == "object":
             assert (df1[col] == df2[col]).all()
