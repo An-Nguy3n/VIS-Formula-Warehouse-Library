@@ -53,6 +53,8 @@ class Base:
                 drop_cols.append(col)
 
         self.drop_cols = drop_cols
+        if "MARKET_CAP" in data.columns.to_list() and "MARKET_CAP" not in self.drop_cols:
+            self.drop_cols.append("MARKET_CAP")
         print("Cac cot khong duoc coi la bien:", self.drop_cols)
 
         # Attrs
